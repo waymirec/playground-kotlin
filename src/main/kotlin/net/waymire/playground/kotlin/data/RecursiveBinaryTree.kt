@@ -1,7 +1,5 @@
 package net.waymire.playground.kotlin.data
 
-import java.util.Stack
-
 data class RecursiveTreeNode<T: Comparable<T>>(
     val value: T,
     var left: RecursiveTreeNode<T>? = null,
