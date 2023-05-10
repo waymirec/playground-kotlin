@@ -14,7 +14,10 @@ repositories {
 dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.0-RC")
 
-    testImplementation("org.junit.jupiter:junit-jupiter-params:5.1.0")
+    testImplementation("org.junit.jupiter:junit-jupiter-engine:5.9.2")
+    testImplementation("org.junit.jupiter:junit-jupiter-params:5.9.2")
+    testImplementation("org.assertj:assertj-core:3.24.2")
+    testImplementation("org.hamcrest:hamcrest:2.2")
     testImplementation(kotlin("test"))
 }
 
