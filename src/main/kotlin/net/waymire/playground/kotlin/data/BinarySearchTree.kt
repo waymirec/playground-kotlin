@@ -177,8 +177,8 @@ data class BinarySearchTreeNode<T: Comparable<T>>(
         var currentParent: BinarySearchTreeNode<T>? = parent
         while (true) {
             val child = when(dir) {
-                DIRECTION.LEFT -> left
-                DIRECTION.RIGHT -> right
+                DIRECTION.LEFT -> current.left
+                DIRECTION.RIGHT -> current.right
             } ?: return BinarySearchResult(parent = currentParent, node = current)
             currentParent = current
             current = child
