@@ -33,29 +33,38 @@ class BalancedBinarySearchTree<T: Comparable<T>>(rootValue: T) {
     fun add(value: T): Boolean {
         val result = root.add(value)
         result.updateTreeHeightBottomUp()
+        if (root.isNotBalanced) rebalance(result)
+        return true
+    }
 
-        if (root.isNotBalanced) {
-            var node = result
+    fun remove(value: T): Boolean {
+        val removed = root.remove(value) ?: return false
+        root.updateTreeHeightTopDown()
+        if (removed.isNotBalanced) rebalance(removed)
+        return true
+    }
+
+    private fun rebalance(startingNode: BalancedBinarySearchTreeNode<T>) {
+        var node = startingNode
+        if (node.isBalanced) {
             while(true) {
                 val parent = node.parent
                 if (node.isNotBalanced) break
                 if (parent == null) break
                 node = parent
             }
-
-            if (node.isNotBalanced) {
-                val updated = node.rightRotate()
-                if (root.value == node.value) root = updated
-                root.updateTreeHeightTopDown()
-            }
         }
-        return true
-    }
 
-    fun remove(value: T): Boolean {
-        root.remove(value) ?: return false
-        root.updateTreeHeightTopDown()
-        return true
+        if (node.isNotBalanced) {
+            val updated = when {
+                node.isRightLeftHeavy -> node.leftRightRotate()
+                node.isRightHeavy -> node.leftRotate()
+                node.isLeftRightHeavy -> node.rightLeftRotate()
+                else -> node.rightRotate()
+            }
+            if (root.value == node.value) root = updated
+            root.updateTreeHeightTopDown()
+        }
     }
 }
 
@@ -72,8 +81,10 @@ class BalancedBinarySearchTreeNode<T: Comparable<T>>(
     val balanceFactor get() = leftHeight - rightHeight
     val isBalanced get() = abs(balanceFactor) < 2
     val isNotBalanced get() = !isBalanced
-    val isLeftHeavy get() = balanceFactor > 1
-    val isRightHeavy get() = balanceFactor < -1
+    val isLeftHeavy get() = balanceFactor > 0
+    val isLeftRightHeavy get() = isLeftHeavy && left!!.isRightHeavy
+    val isRightHeavy get() = balanceFactor < 0
+    val isRightLeftHeavy get() = isRightHeavy && right!!.isLeftHeavy
     val height get() = max(leftHeight, rightHeight)
 
 
@@ -87,10 +98,32 @@ class BalancedBinarySearchTreeNode<T: Comparable<T>>(
         val leftChild = this.left ?: throw IllegalStateException()
         this.left = leftChild.right
         leftChild.right = this
-        this.parent?.let { it.left = leftChild }
+        this.parent?.let { if (isLeftChild) it.left = leftChild else it.right = leftChild }
         leftChild.parent = this.parent
         this.parent = leftChild
         return leftChild
+    }
+
+    fun leftRotate(): BalancedBinarySearchTreeNode<T> {
+        val rightChild = this.right ?: throw IllegalStateException()
+        this.right = rightChild.left
+        rightChild.left = this
+        this.parent?.let { if (isLeftChild) it.left = rightChild else it.right = rightChild }
+        rightChild.parent = this.parent
+        this.parent = rightChild
+        return rightChild
+    }
+
+    fun leftRightRotate(): BalancedBinarySearchTreeNode<T> {
+        val rightChild = this.right ?: throw IllegalStateException()
+        rightChild.rightRotate()
+        return this.leftRotate()
+    }
+
+    fun rightLeftRotate(): BalancedBinarySearchTreeNode<T> {
+        val leftChild = this.left ?: throw IllegalStateException()
+        leftChild.leftRotate()
+        return this.rightRotate()
     }
 
     fun contains(value: T): Boolean {
@@ -295,7 +328,7 @@ class BalancedBinarySearchTreeNode<T: Comparable<T>>(
     }
 
     private fun findReplacementNodeForDelete(): BalancedBinarySearchTreeNode<T>? {
-        return if (Random.nextInt(0, 100) < 50)
+        return if (Random.nextInt(0, 100) < 150)
             findInOrderSuccessor()
         else
             findInOrderPredecessor()

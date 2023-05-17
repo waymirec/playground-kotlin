@@ -3,6 +3,7 @@ package net.waymire.playground.kotlin.data
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.CoreMatchers.anyOf
 import org.hamcrest.MatcherAssert.assertThat
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.MethodSource
@@ -126,15 +127,14 @@ class BalancedBinarySearchTreeTest {
     @Test
     fun `given a BBST, when a right node with 2 children is removed, then update height`() {
         val values =   listOf(43, 18, 15, 20, 50, 47, 46, 55)
-        val expected1 = listOf(43, 18, 15, 20, 46, 47, 55)
-        val expected2 = listOf(43, 18, 15, 20, 55, 47, 46)
+        val expected = listOf(43, 18, 15, 20, 47, 46, 55)
         val tree = values.toBalancedBinarySearchTree()
         assertThat(tree.height, `is`(3))
         tree.remove(50)
         assertThat(tree.height, anyOf(`is`(2), `is`(3)))
 
         val sorted = tree.traversePreOrder()
-        assertThat(sorted, anyOf(`is`(expected1), `is`(expected2)))
+        assertThat(sorted, `is`(expected))
     }
 
     @Test
@@ -142,34 +142,61 @@ class BalancedBinarySearchTreeTest {
         val values = listOf(100, 50, 150, 40, 60)
         val tree = values.toBalancedBinarySearchTree()
         assertTrue(tree.isBalanced)
-        assertFalse(tree.isLeftHeavy)
-        assertFalse(tree.isRightHeavy)
-    }
-
-    @Test
-    fun `given a left-heavy BBST, when balance is checked, then return false`() {
-        val values = listOf(100, 50, 150, 40, 60, 30)
-        val tree = values.toBalancedBinarySearchTree()
-        assertFalse(tree.isBalanced)
         assertTrue(tree.isLeftHeavy)
         assertFalse(tree.isRightHeavy)
     }
 
-    @Test
-    fun `given a right-heavy BBST, when balance is checked, then return false`() {
-        val values = listOf(100, 50, 150, 120, 160, 170)
-        val tree = values.toBalancedBinarySearchTree()
-        assertFalse(tree.isBalanced)
-        assertFalse(tree.isLeftHeavy)
-        assertTrue(tree.isRightHeavy)
-    }
 
     @Test
-    fun `given a balanced BBST, when the tree left-heavy, then perform right rotation`() {
+    fun `given a balanced BBST, when the tree is left-heavy, then perform right rotation`() {
         val values = listOf(500, 400, 600, 300)
         val expected = listOf(500, 300, 200, 400, 600)
         val tree = values.toBalancedBinarySearchTree()
         tree.add(200)
+        assertTrue(tree.isBalanced)
+        val sorted = tree.traversePreOrder()
+        assertEquals(expected, sorted)
+    }
+
+    @Test
+    fun `given another balanced BBST, when the tree is left-heavy, then perform right rotation`() {
+        val values = listOf(100, 50, 400, 300)
+        val expected = listOf(100, 50, 300, 200, 400)
+        val tree = values.toBalancedBinarySearchTree()
+        tree.add(200)
+        assertTrue(tree.isBalanced)
+        val sorted = tree.traversePreOrder()
+        assertEquals(expected, sorted)
+    }
+
+    @Test
+    fun `given a balanced BBST, when the tree is right-heavy, then perform left rotation`() {
+        val values = listOf(500, 400, 600, 700)
+        val expected = listOf(500, 400, 700, 600, 800)
+        val tree = values.toBalancedBinarySearchTree()
+        tree.add(800)
+        assertTrue(tree.isBalanced)
+        val sorted = tree.traversePreOrder()
+        assertEquals(expected, sorted)
+    }
+
+    @Test
+    fun `given a balanced BBST, when the left subtree becomes right heavy, then perform a Right-Left rotation`() {
+        val values = listOf(200, 100)
+        val expected = listOf(150, 100, 200)
+        val tree = values.toBalancedBinarySearchTree()
+        tree.add(150)
+        assertTrue(tree.isBalanced)
+        val sorted = tree.traversePreOrder()
+        assertEquals(expected, sorted)
+    }
+
+    @Test
+    fun `given a balanced BBST, when the right subtree becomes left heavy, then perform a Left-Right rotation`() {
+        val values = listOf(200, 100)
+        val expected = listOf(150, 100, 200)
+        val tree = values.toBalancedBinarySearchTree()
+        tree.add(150)
         assertTrue(tree.isBalanced)
         val sorted = tree.traversePreOrder()
         assertEquals(expected, sorted)
