@@ -1,4 +1,4 @@
-package net.waymire.playground.kotlin.data
+package net.waymire.playground.kotlin.data.tree.bst
 
 import org.hamcrest.CoreMatchers.anyOf
 import org.junit.jupiter.api.Test
@@ -15,7 +15,7 @@ import org.hamcrest.MatcherAssert.assertThat
 
 class RecursiveBinarySearchTreeTest {
     @ParameterizedTest
-    @MethodSource("net.waymire.playground.kotlin.data.RecursiveBinarySearchTreeTest#setOfIntegers")
+    @MethodSource("net.waymire.playground.kotlin.data.tree.bst.RecursiveBinarySearchTreeTest#setOfIntegers")
     fun `given a BST, when in-order sort requested, then should sort in-order`(values: Set<Int>) {
         val tree = values.toRecursiveBinarySearchTree()
         val expected = values.sorted()
@@ -51,7 +51,7 @@ class RecursiveBinarySearchTreeTest {
     }
 
     @ParameterizedTest
-    @MethodSource("net.waymire.playground.kotlin.data.RecursiveBinarySearchTreeTest#setOfIntegers")
+    @MethodSource("net.waymire.playground.kotlin.data.tree.bst.RecursiveBinarySearchTreeTest#setOfIntegers")
     fun `given value exists in tree, when contains called, then return true`(values: Set<Int>) {
         val tree = values.toRecursiveBinarySearchTree()
         val check = values.last()
@@ -60,7 +60,7 @@ class RecursiveBinarySearchTreeTest {
     }
 
     @ParameterizedTest
-    @MethodSource("net.waymire.playground.kotlin.data.RecursiveBinarySearchTreeTest#setOfIntegers")
+    @MethodSource("net.waymire.playground.kotlin.data.tree.bst.RecursiveBinarySearchTreeTest#setOfIntegers")
     fun `given value does not exist in tree, when contains called, then return false`(values: Set<Int>) {
         val tree = values.toRecursiveBinarySearchTree()
         val result = tree.contains(Int.MAX_VALUE)

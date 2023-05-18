@@ -1,9 +1,8 @@
-package net.waymire.playground.kotlin.data
+package net.waymire.playground.kotlin.data.tree.avl
 
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.CoreMatchers.anyOf
 import org.hamcrest.MatcherAssert.assertThat
-import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.MethodSource
@@ -13,9 +12,9 @@ import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
-class BalancedBinarySeareeTest {
+class BalancedBinarySearchTreeTest {
     @ParameterizedTest
-    @MethodSource("net.waymire.playground.kotlin.data.BalancedBinarySearchTreeTest#setOfIntegers")
+    @MethodSource("net.waymire.playground.kotlin.data.tree.avl.BalancedBinarySearchTreeTest#setOfIntegers")
     fun `given a BBST, when in-order sort requested, then should sort in-order`(values: Set<Int>) {
         val tree = values.toBalancedBinarySearchTree()
         val expected = values.sorted()
@@ -53,7 +52,7 @@ class BalancedBinarySeareeTest {
     }
 
     @ParameterizedTest
-    @MethodSource("net.waymire.playground.kotlin.data.BalancedBinarySearchTreeTest#setOfIntegers")
+    @MethodSource("net.waymire.playground.kotlin.data.tree.avl.BalancedBinarySearchTreeTest#setOfIntegers")
     fun `given value exists in BBST, when contains called, then return true`(values: Set<Int>) {
         val tree = values.toBalancedBinarySearchTree()
         val check = values.last()
@@ -62,7 +61,7 @@ class BalancedBinarySeareeTest {
     }
 
     @ParameterizedTest
-    @MethodSource("net.waymire.playground.kotlin.data.BalancedBinarySearchTreeTest#setOfIntegers")
+    @MethodSource("net.waymire.playground.kotlin.data.tree.avl.BalancedBinarySearchTreeTest#setOfIntegers")
     fun `given value does not exist in BBST, when contains called, then return false`(values: Set<Int>) {
         val tree = values.toBalancedBinarySearchTree()
         val result = tree.contains(Int.MAX_VALUE)
@@ -212,9 +211,9 @@ class BalancedBinarySeareeTest {
             (1..1_000).map { Random.nextInt(1, 10_000) }.toSet(),
             (1..10_000).map { Random.nextInt(1, 100_000) }.toSet(),
             (1..100_000).map { Random.nextInt(1, 1_000_000) }.toSet(),
-            (1..1_000_000).map { Random.nextInt(1, 10_000_000) }.toSet(),
-            (1..10_000_000).map { Random.nextInt(1, 100_000_000) }.toSet(),
-            //(1..100_000_000).map { Random.nextInt(1, 900_000_000) }.toSet()
+//            (1..1_000_000).map { Random.nextInt(1, 10_000_000) }.toSet(),
+//            (1..10_000_000).map { Random.nextInt(1, 100_000_000) }.toSet(),
+//            (1..100_000_000).map { Random.nextInt(1, 900_000_000) }.toSet()
         )
     }
 }

@@ -1,4 +1,4 @@
-package net.waymire.playground.kotlin.data
+package net.waymire.playground.kotlin.data.tree.bst
 
 import org.hamcrest.CoreMatchers
 import org.hamcrest.MatcherAssert
@@ -13,7 +13,7 @@ import kotlin.test.assertTrue
 
 class BinarySearchTreeTest {
     @ParameterizedTest
-    @MethodSource("net.waymire.playground.kotlin.data.BinarySearchTreeTest#setOfIntegers")
+    @MethodSource("net.waymire.playground.kotlin.data.tree.bst.BinarySearchTreeTest#setOfIntegers")
     fun `given a BST, when in-order sort requested, then should sort in-order`(values: Set<Int>) {
         val tree = values.toBinarySearchTree()
         val expected = values.sorted()
@@ -49,7 +49,7 @@ class BinarySearchTreeTest {
     }
 
     @ParameterizedTest
-    @MethodSource("net.waymire.playground.kotlin.data.BinarySearchTreeTest#setOfIntegers")
+    @MethodSource("net.waymire.playground.kotlin.data.tree.bst.BinarySearchTreeTest#setOfIntegers")
     fun `given value exists in tree, when contains called, then return true`(values: Set<Int>) {
         val tree = values.toBinarySearchTree()
         val check = values.last()
@@ -58,7 +58,7 @@ class BinarySearchTreeTest {
     }
 
     @ParameterizedTest
-    @MethodSource("net.waymire.playground.kotlin.data.BinarySearchTreeTest#setOfIntegers")
+    @MethodSource("net.waymire.playground.kotlin.data.tree.bst.BinarySearchTreeTest#setOfIntegers")
     fun `given value does not exist in tree, when contains called, then return false`(values: Set<Int>) {
         val tree = values.toBinarySearchTree()
         val result = tree.contains(Int.MAX_VALUE)
