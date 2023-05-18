@@ -143,14 +143,3 @@ fun <T: Comparable<T>> BinarySearchTreeNode<T>.recursiveTraverseBreadthFirst(): 
     return recurse(deque, mutableListOf())
 }
 //endregion
-
-//region Misc
-fun <T: Comparable<T>> Collection<T>.toRecursiveBinarySearchTree(): RecursiveBinarySearchTree<T> {
-    if (isEmpty()) throw IllegalArgumentException("list cannot be empty")
-    val iterator = iterator()
-    val tree = RecursiveBinarySearchTree(iterator.next())
-    while(iterator.hasNext()) tree.add(iterator.next())
-    return tree
-}
-
-//endregion
