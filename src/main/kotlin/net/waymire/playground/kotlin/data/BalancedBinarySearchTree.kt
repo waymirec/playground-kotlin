@@ -1,6 +1,7 @@
 package net.waymire.playground.kotlin.data
 
 import java.util.Stack
+import java.util.concurrent.atomic.AtomicInteger
 import kotlin.math.abs
 import kotlin.math.max
 import kotlin.random.Random
@@ -97,6 +98,7 @@ class BalancedBinarySearchTreeNode<T: Comparable<T>>(
     fun rightRotate(): BalancedBinarySearchTreeNode<T> {
         val leftChild = this.left ?: throw IllegalStateException()
         this.left = leftChild.right
+        leftChild.right?.parent = this
         leftChild.right = this
         this.parent?.let { if (isLeftChild) it.left = leftChild else it.right = leftChild }
         leftChild.parent = this.parent
@@ -107,6 +109,7 @@ class BalancedBinarySearchTreeNode<T: Comparable<T>>(
     fun leftRotate(): BalancedBinarySearchTreeNode<T> {
         val rightChild = this.right ?: throw IllegalStateException()
         this.right = rightChild.left
+        rightChild.left?.parent = this
         rightChild.left = this
         this.parent?.let { if (isLeftChild) it.left = rightChild else it.right = rightChild }
         rightChild.parent = this.parent
@@ -219,7 +222,6 @@ class BalancedBinarySearchTreeNode<T: Comparable<T>>(
             current = stack.pop()
             accumulator.add(current.value)
             current = current.right
-            continue
         }
         return accumulator
     }
@@ -237,7 +239,6 @@ class BalancedBinarySearchTreeNode<T: Comparable<T>>(
             if (queue.isEmpty()) break
 
             current = queue.removeFirst().right
-            continue
         }
         return accumulator
     }

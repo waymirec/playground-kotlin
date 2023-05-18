@@ -13,14 +13,15 @@ import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
-class BalancedBinarySearchTreeTest {
+class BalancedBinarySeareeTest {
     @ParameterizedTest
     @MethodSource("net.waymire.playground.kotlin.data.BalancedBinarySearchTreeTest#setOfIntegers")
     fun `given a BBST, when in-order sort requested, then should sort in-order`(values: Set<Int>) {
         val tree = values.toBalancedBinarySearchTree()
         val expected = values.sorted()
         val sorted = tree.traverseInOrder()
-        assertEquals(expected, sorted)
+        assertEquals(values.size, sorted.size)
+        assertEquals(expected, sorted, "sorted output does not match sorted input")
     }
 
     @Test
@@ -29,6 +30,7 @@ class BalancedBinarySearchTreeTest {
         val expected = values.toList()
         val tree = values.toBalancedBinarySearchTree()
         val sorted = tree.traversePreOrder()
+        assertEquals(values.size, sorted.size)
         assertEquals(expected, sorted)
     }
 
@@ -205,6 +207,7 @@ class BalancedBinarySearchTreeTest {
     companion object {
         @JvmStatic
         fun setOfIntegers() = Stream.of(
+            (1..10).map { Random.nextInt(1, 1000) }.toSet(),
             (1..100).map { Random.nextInt(1, 1000) }.toSet(),
             (1..1_000).map { Random.nextInt(1, 10_000) }.toSet(),
             (1..10_000).map { Random.nextInt(1, 100_000) }.toSet(),
