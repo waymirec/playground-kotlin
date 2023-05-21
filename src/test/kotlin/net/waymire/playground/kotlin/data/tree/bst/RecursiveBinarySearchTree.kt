@@ -13,7 +13,7 @@ import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.MatcherAssert.assertThat
 
 
-class RecursiveBinarySearchTreeTest {
+internal class RecursiveBinarySearchTreeTest {
     @ParameterizedTest
     @MethodSource("net.waymire.playground.kotlin.data.tree.bst.RecursiveBinarySearchTreeTest#setOfIntegers")
     fun `given a BST, when in-order sort requested, then should sort in-order`(values: Set<Int>) {

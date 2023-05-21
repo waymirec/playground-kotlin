@@ -29,7 +29,7 @@ class BalancedBinarySearchTree<T: Comparable<T>>(rootValue: T) {
     fun add(value: T): Boolean {
         val result = root.add(value)
         result.updateTreeHeightBottomUp()
-        if (root.isNotBalanced) rebalance(result)
+        if (root.isNotBalanced) result.rebalance()
         return true
     }
 
@@ -37,12 +37,12 @@ class BalancedBinarySearchTree<T: Comparable<T>>(rootValue: T) {
         val removed = root.remove(value) ?: return false
         //todo: improve this to only recalc the side of the tree affected
         root.updateTreeHeightTopDown()
-        if (removed.isNotBalanced) rebalance(removed)
+        if (removed.isNotBalanced) removed.rebalance()
         return true
     }
 
-    private fun rebalance(startingNode: BalancedBinarySearchTreeNode<T>) {
-        var node = startingNode
+    private fun BalancedBinarySearchTreeNode<T>.rebalance() {
+        var node = this
         if (node.isBalanced) {
             while(true) {
                 val parent = node.parent

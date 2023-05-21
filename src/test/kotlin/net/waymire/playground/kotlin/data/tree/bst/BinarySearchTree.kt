@@ -11,7 +11,7 @@ import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
-class BinarySearchTreeTest {
+internal class BinarySearchTreeTest {
     @ParameterizedTest
     @MethodSource("net.waymire.playground.kotlin.data.tree.bst.BinarySearchTreeTest#setOfIntegers")
     fun `given a BST, when in-order sort requested, then should sort in-order`(values: Set<Int>) {
