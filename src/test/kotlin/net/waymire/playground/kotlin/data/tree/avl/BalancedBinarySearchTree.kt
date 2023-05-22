@@ -18,7 +18,7 @@ internal class BalancedBinarySearchTreeTest {
     fun `given a BBST, when in-order sort requested, then should sort in-order`(values: Set<Int>) {
         val tree = values.toBalancedBinarySearchTree()
         val expected = values.sorted()
-        val sorted = tree.traverseInOrder()
+        val sorted = tree.asSequence().toList()
         assertEquals(values.size, sorted.size)
         assertEquals(expected, sorted, "sorted output does not match sorted input")
     }
@@ -28,7 +28,7 @@ internal class BalancedBinarySearchTreeTest {
         val values = listOf(43, 18, 15, 20, 50, 47, 55)
         val expected = values.toList()
         val tree = values.toBalancedBinarySearchTree()
-        val sorted = tree.traversePreOrder()
+        val sorted = tree.asSequence(TraversalDirection.PRE_ORDER).toList()
         assertEquals(values.size, sorted.size)
         assertEquals(expected, sorted)
     }
@@ -38,7 +38,7 @@ internal class BalancedBinarySearchTreeTest {
         val values = listOf(43, 18, 15, 20, 50, 47, 55)
         val expected = listOf(15, 20, 18, 47, 55, 50, 43)
         val tree = values.toBalancedBinarySearchTree()
-        val sorted = tree.traversePostOrder()
+        val sorted = tree.asSequence(TraversalDirection.POST_ORDER).toList()
         assertEquals(expected, sorted)
     }
 
@@ -47,7 +47,7 @@ internal class BalancedBinarySearchTreeTest {
         val values = listOf(43, 18, 15, 20, 50, 47, 55)
         val expected = listOf(43,18,50,15,20,47,55)
         val tree = values.toBalancedBinarySearchTree()
-        val sorted = tree.traverseBreadthFirst()
+        val sorted = tree.asSequence(TraversalDirection.BREADTH_FIRST).toList()
         assertEquals(expected, sorted)
     }
 
@@ -74,7 +74,7 @@ internal class BalancedBinarySearchTreeTest {
         val expected = listOf(43, 18, 15, 20, 50, 47, 55, 53)
         val tree = values.toBalancedBinarySearchTree()
         tree.remove(46)
-        val sorted = tree.traversePreOrder()
+        val sorted = tree.asSequence(TraversalDirection.PRE_ORDER).toList()
         assertEquals(expected, sorted)
     }
 
@@ -84,7 +84,7 @@ internal class BalancedBinarySearchTreeTest {
         val expected = listOf(43, 18, 15, 20, 50, 46, 55, 53)
         val tree = values.toBalancedBinarySearchTree()
         tree.remove(47)
-        val sorted = tree.traversePreOrder()
+        val sorted = tree.asSequence(TraversalDirection.PRE_ORDER).toList()
         assertEquals(expected, sorted)
     }
 
@@ -95,7 +95,7 @@ internal class BalancedBinarySearchTreeTest {
         val expected2 = listOf(43, 18, 15, 20, 47, 46, 55, 53)
         val tree = values.toBalancedBinarySearchTree()
         tree.remove(50)
-        val sorted = tree.traversePreOrder()
+        val sorted = tree.asSequence(TraversalDirection.PRE_ORDER).toList()
         assertThat(sorted, anyOf(`is`(expected1), `is`(expected2)))
     }
 
@@ -134,7 +134,7 @@ internal class BalancedBinarySearchTreeTest {
         tree.remove(50)
         assertThat(tree.height, anyOf(`is`(2), `is`(3)))
 
-        val sorted = tree.traversePreOrder()
+        val sorted = tree.asSequence(TraversalDirection.PRE_ORDER).toList()
         assertThat(sorted, `is`(expected))
     }
 
@@ -155,7 +155,7 @@ internal class BalancedBinarySearchTreeTest {
         val tree = values.toBalancedBinarySearchTree()
         tree.add(200)
         assertTrue(tree.isBalanced)
-        val sorted = tree.traversePreOrder()
+        val sorted = tree.asSequence(TraversalDirection.PRE_ORDER).toList()
         assertEquals(expected, sorted)
     }
 
@@ -166,7 +166,7 @@ internal class BalancedBinarySearchTreeTest {
         val tree = values.toBalancedBinarySearchTree()
         tree.add(200)
         assertTrue(tree.isBalanced)
-        val sorted = tree.traversePreOrder()
+        val sorted = tree.asSequence(TraversalDirection.PRE_ORDER).toList()
         assertEquals(expected, sorted)
     }
 
@@ -177,7 +177,7 @@ internal class BalancedBinarySearchTreeTest {
         val tree = values.toBalancedBinarySearchTree()
         tree.add(800)
         assertTrue(tree.isBalanced)
-        val sorted = tree.traversePreOrder()
+        val sorted = tree.asSequence(TraversalDirection.PRE_ORDER).toList()
         assertEquals(expected, sorted)
     }
 
@@ -188,7 +188,7 @@ internal class BalancedBinarySearchTreeTest {
         val tree = values.toBalancedBinarySearchTree()
         tree.add(150)
         assertTrue(tree.isBalanced)
-        val sorted = tree.traversePreOrder()
+        val sorted = tree.asSequence(TraversalDirection.PRE_ORDER).toList()
         assertEquals(expected, sorted)
     }
 
@@ -199,7 +199,7 @@ internal class BalancedBinarySearchTreeTest {
         val tree = values.toBalancedBinarySearchTree()
         tree.add(150)
         assertTrue(tree.isBalanced)
-        val sorted = tree.traversePreOrder()
+        val sorted = tree.asSequence(TraversalDirection.PRE_ORDER).toList()
         assertEquals(expected, sorted)
     }
 

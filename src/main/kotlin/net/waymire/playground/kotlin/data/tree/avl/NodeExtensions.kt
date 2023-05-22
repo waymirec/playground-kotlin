@@ -1,6 +1,5 @@
 package net.waymire.playground.kotlin.data.tree.avl
 
-import java.util.Stack
 import kotlin.math.abs
 import kotlin.math.max
 import kotlin.random.Random
@@ -178,73 +177,6 @@ fun <T: Comparable<T>> BalancedBinarySearchTreeNode<T>.rightLeftRotate(): Balanc
     val leftChild = this.left ?: throw IllegalStateException()
     leftChild.leftRotate()
     return this.rightRotate()
-}
-//endregion
-
-//region Node Traversal
-fun <T: Comparable<T>> BalancedBinarySearchTreeNode<T>.traverseInOrder(): List<T> {
-    val stack: Stack<BalancedBinarySearchTreeNode<T>> = Stack()
-    val accumulator: MutableList<T> = mutableListOf()
-    var current: BalancedBinarySearchTreeNode<T>? = this
-    while(true) {
-        while(current != null) {
-            stack.push(current)
-            current = current.left
-        }
-        if (stack.empty()) break
-
-        current = stack.pop()
-        accumulator.add(current.value)
-        current = current.right
-    }
-    return accumulator
-}
-
-fun <T: Comparable<T>> BalancedBinarySearchTreeNode<T>.traversePreOrder(): List<T> {
-    val queue: ArrayDeque<BalancedBinarySearchTreeNode<T>> = ArrayDeque()
-    val accumulator: MutableList<T> = mutableListOf()
-    var current: BalancedBinarySearchTreeNode<T>? = this
-    while(true) {
-        while(current != null) {
-            accumulator.add(current.value)
-            queue.addFirst(current)
-            current = current.left
-        }
-        if (queue.isEmpty()) break
-
-        current = queue.removeFirst().right
-    }
-    return accumulator
-}
-
-fun <T: Comparable<T>> BalancedBinarySearchTreeNode<T>.traversePostOrder(): List<T> {
-    val stack1: Stack<BalancedBinarySearchTreeNode<T>> = Stack()
-    val stack2: Stack<BalancedBinarySearchTreeNode<T>> = Stack()
-    stack1.push(this)
-
-    while(stack1.isNotEmpty()) {
-        val current = stack1.pop()
-        stack2.push(current)
-        current.left?.let { stack1.push(it) }
-        current.right?.let { stack1.push(it) }
-    }
-
-    return stack2.toList().map { it.value }.reversed()
-}
-
-fun <T: Comparable<T>> BalancedBinarySearchTreeNode<T>.traverseBreadthFirst(): List<T> {
-    val accumulator: MutableList<T> = mutableListOf()
-    val deque = ArrayDeque<BalancedBinarySearchTreeNode<T>>()
-    deque.addFirst(this)
-
-    while(deque.isNotEmpty()) {
-        val node = deque.removeFirst()
-        accumulator.add(node.value)
-        node.left?.let { deque.addLast(it) }
-        node.right?.let { deque.addLast(it) }
-    }
-
-    return accumulator
 }
 //endregion
 
