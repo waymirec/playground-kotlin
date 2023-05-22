@@ -174,3 +174,6 @@ fun <T : Comparable<T>> BTreeNode<T>.traverseInOrder(): List<T> {
     return accumulator
 }
 //endregion
+
+
+//https://stackoverflow.com/questions/63872883/how-to-traverse-btree-in-order-without-recursion-in-iterative-style
