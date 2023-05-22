@@ -1,8 +1,12 @@
 package net.waymire.playground.kotlin.data.tree.btree
 
 import net.waymire.playground.kotlin.SortedList
+import net.waymire.playground.kotlin.data.tree.avl.BalancedBinarySearchTreeNode
+import net.waymire.playground.kotlin.data.tree.avl.traverseInOrder
 import net.waymire.playground.kotlin.sortedListOf
+import java.util.Currency
 import java.util.Stack
+import kotlin.math.ceil
 
 //region Support Types
 //endregion
@@ -16,6 +20,7 @@ val <T : Comparable<T>> BTreeNode<T>.isFull get() = keys.size >= maxKeySize || c
 val <T : Comparable<T>> BTreeNode<T>.isNotFull get() = !isFull
 val <T : Comparable<T>> BTreeNode<T>.isOverSized get() = keys.size > maxKeySize || children.size > maxChildrenSize
 val <T : Comparable<T>> BTreeNode<T>.isUnderSized get() = keys.size < minKeySize || children.size < minChildrenSize
+val <T : Comparable<T>> BTreeNode<T>.hasExtraKeyCapacity get() = keys.size > minKeySize
 //endregion
 
 //region Contains, Add, Remove
@@ -35,22 +40,60 @@ fun <T : Comparable<T>> BTreeNode<T>.add(value: T): BTreeNode<T> {
 
         for ((i, v) in current.keys.withIndex()) {
             if (value < v) {
-                current = children[i]
+                current = current.children[i]
                 continue@outer
             }
         }
 
-        current = children.last()
+        current = current.children.last()
     }
 }
 
 fun <T : Comparable<T>> BTreeNode<T>.remove(value: T): BTreeNode<T>? {
     val node = findNode(value) ?: return null
-    node.keys.remove(value)
-    if (node.isUnderSized) {
-
+    if (node.hasExtraKeyCapacity) {
+        node.keys.remove(value)
+        return node
     }
-    return node
+
+    val promoted = node.promote(value)
+    if (promoted != null) return promoted
+
+    return node.promote(value)
+}
+
+fun <T : Comparable<T>> BTreeNode<T>.promote(targetValue: T): BTreeNode<T>? {
+    val index = keys.indexOf(targetValue)
+    if (index < 0) return null
+
+    val leftChild = children.getOrNull(index)
+    if (leftChild != null && leftChild.hasExtraKeyCapacity) {
+        return leftChild.promotePredecessor(targetValue)
+    }
+
+    val rightChild = children.getOrNull(index+1)
+    if (rightChild != null && rightChild.hasExtraKeyCapacity) {
+        return rightChild.promoteSuccessor(targetValue)
+    }
+
+    return null
+}
+
+fun <T : Comparable<T>> BTreeNode<T>.promotePredecessor(targetValue: T): BTreeNode<T>? {
+    val index = keys.indexOf(targetValue)
+    val child = children.getOrNull(index) ?: return null
+    val promoted = child.keys.removeLast()
+    this.keys[index] = promoted
+    return child
+}
+
+fun <T : Comparable<T>> BTreeNode<T>.promoteSuccessor(targetValue: T): BTreeNode<T>? {
+    val index = keys.indexOf(targetValue)
+    if (index < 0) return null
+    val child = children.getOrNull(index+1) ?: return null
+    val promoted = child.keys.removeFirst()
+    this.keys[index] = promoted
+    return child
 }
 
 private fun <T : Comparable<T>> BTreeNode<T>.clear() {
@@ -64,22 +107,23 @@ private fun <T : Comparable<T>> BTreeNode<T>.clear() {
 fun <T : Comparable<T>> BTreeNode<T>.findNode(value: T): BTreeNode<T>? {
     var current: BTreeNode<T> = this
     outer@ while (true) {
-        if (current.isLeaf) return if (current.keys.contains(value)) current else null
+        if (current.keys.contains(value)) return current
+        if (current.isLeaf) return null
 
         for ((i, v) in current.keys.withIndex()) {
             if (value < v) {
-                current = children[i]
+                current = current.children[i]
                 continue@outer
             }
         }
-        current = children.last()
+        current = current.children.last()
     }
 }
 //endregion
 
 //region Rotations
 fun <T : Comparable<T>> BTreeNode<T>.split(): BTreeNode<T> {
-    val medianIndex = (keys.size / 2) - 1
+    val medianIndex = keys.lastIndex / 2
     val medianValue = keys[medianIndex]
 
     val p = this.parent ?: BTreeNode(order)
@@ -104,6 +148,7 @@ fun <T : Comparable<T>> BTreeNode<T>.split(): BTreeNode<T> {
     )
     p.children.add(right)
 
+    this.clear()
     return p
 }
 
@@ -115,25 +160,17 @@ fun <T : Comparable<T>> BTreeNode<T>.traverseInOrder(): List<T> {
     val accumulator: MutableList<T> = mutableListOf()
     var current: BTreeNode<T>? = this
 
-    while(current != null) {
-        stack.push(current)
-        current = current.children.firstOrNull()
-    }
-    if (stack.empty()) return accumulator
+    while (current?.children?.firstOrNull() != null) current = current.children.first()
+    if (current == null) return accumulator
 
-    while(stack.isNotEmpty()) {
-        current = stack.pop()
+    while (stack.isNotEmpty()) {
         if (current.isLeaf) {
             accumulator.addAll(current.keys)
-            continue
+            stack.push(current.parent)
         }
-        var index = 0
-        while(index < current.keys.size) {
-            accumulator.add(current.keys[index])
-            accumulator.addAll(current.children[index+1].keys)
-            index++
-        }
+
     }
+
     return accumulator
 }
 //endregion
