@@ -10,7 +10,7 @@ internal class BTreeTest {
     fun `given a B-Tree, when toList() called, then return the tree in-order`() {
         val values = listOf(40, 41, 50, 56, 57, 60, 61, 68, 70, 73, 78, 80, 84, 87, 90, 93, 95, 97, 99)
         val tree = values.toBTree(5)
-        val list = tree.toList()
+        val list = tree.asSequence().toList()
         assertEquals(values, list)
     }
 
@@ -20,8 +20,8 @@ internal class BTreeTest {
         val expected = listOf(40, 41, 50, 56, 57, 60, 61, 68, 70, 73, 78, 80, 84, 87, 90, 93, 97, 99)
         val tree = values.toBTree(5)
 
-        //tree.remove(95)
-        val list = tree.toList()
+        tree.remove(95)
+        val list = tree.asSequence().toList()
 
         assertEquals(expected, list)
     }

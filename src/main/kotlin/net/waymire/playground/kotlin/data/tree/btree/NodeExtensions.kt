@@ -153,27 +153,3 @@ fun <T : Comparable<T>> BTreeNode<T>.split(): BTreeNode<T> {
 }
 
 //endregion
-
-//region Traversal
-fun <T : Comparable<T>> BTreeNode<T>.traverseInOrder(): List<T> {
-    val stack: Stack<BTreeNode<T>> = Stack()
-    val accumulator: MutableList<T> = mutableListOf()
-    var current: BTreeNode<T>? = this
-
-    while (current?.children?.firstOrNull() != null) current = current.children.first()
-    if (current == null) return accumulator
-
-    while (stack.isNotEmpty()) {
-        if (current.isLeaf) {
-            accumulator.addAll(current.keys)
-            stack.push(current.parent)
-        }
-
-    }
-
-    return accumulator
-}
-//endregion
-
-
-//https://stackoverflow.com/questions/63872883/how-to-traverse-btree-in-order-without-recursion-in-iterative-style
