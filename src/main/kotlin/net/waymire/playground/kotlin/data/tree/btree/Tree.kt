@@ -2,9 +2,7 @@ package net.waymire.playground.kotlin.data.tree.btree
 
 import java.util.Stack
 
-class BTree<T : Comparable<T>>(
-    val order: Int
-) : Iterable<T> {
+class BTree<T : Comparable<T>>(order: Int) : Iterable<T> {
     private var root = BTreeNode<T>(order)
 
     fun contains(value: T) = root.contains(value)
@@ -15,10 +13,7 @@ class BTree<T : Comparable<T>>(
         return true
     }
 
-    fun remove(value: T): Boolean {
-        val removed = root.remove(value) ?: return false
-        return true
-    }
+    fun remove(value: T) = root.remove(value) != null
 
     override fun iterator() = asSequence().iterator()
 
