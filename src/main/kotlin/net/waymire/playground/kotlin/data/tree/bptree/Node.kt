@@ -20,6 +20,9 @@ class TreeNode<K: Comparable<K>, V>(
     val minKeySize = minElementsAllowed - 1
     val maxKeySize = maxElementsAllowed - 1
 
+    var next: TreeNode<K, V>? = null
+    var previous: TreeNode<K, V>? = null
+
     override fun compareTo(other: TreeNode<K, V>) = compareValuesBy(this, other, { it.keys.first() }, { it.keys.first() })
 
     override fun toString() = "TreeNode(keys=${keys.joinToString()})"

@@ -15,23 +15,25 @@ class BPTree<K : Comparable<K>, V>(order: Int) : Iterable<K> {
 
     fun remove(key: K) = root.remove(key) != null
 
-    override fun iterator() = asSequence().iterator()
+    override fun iterator() = keyIterator()
+    fun valueIterator() = valuesSequence().iterator()
+    fun keyIterator() = keysSequence().iterator()
 
-    fun asSequence(): Sequence<K> = sequence {
-        val stack: Stack<Pair<TreeNode<K, V>, Int>> = Stack()
-        stack.push(Pair(root, 0))
+    fun keysSequence(): Sequence<K> = sequence {
+        var current: TreeNode<K, V>? = root
+        while(current!!.isNotLeaf) current = current.children.first()
+        while(current != null) {
+            yieldAll(current.keys)
+            current = current.next
+        }
+    }
 
-        while (stack.isNotEmpty()) {
-            val (node, index) = stack.pop()
-            if (node.isLeaf) {
-                yieldAll(node.keys)
-                continue
-            }
-
-            if (index >= node.children.size) continue
-            if (index > 0) yield(node.keys[index - 1])
-            stack.push(Pair(node, index + 1))
-            stack.push(Pair(node.children[index], 0))
+    fun valuesSequence(): Sequence<V> = sequence {
+        var current: TreeNode<K, V>? = root
+        while(current!!.isNotLeaf) current = current.children.first()
+        while(current != null) {
+            yieldAll(current.records.map { it.value })
+            current = current.next
         }
     }
 }

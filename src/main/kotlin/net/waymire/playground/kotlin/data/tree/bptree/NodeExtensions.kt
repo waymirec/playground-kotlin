@@ -20,7 +20,8 @@ val <K : Comparable<K>, V> TreeNode<K, V>.hasExtraKeyCapacity get() = keys.size 
 
 //region Helpers
 fun <K : Comparable<K>, V> TreeNode<K, V>.adopt(other: TreeNode<K, V>) {
-    other.children.forEach { it.parent = this }
+    other.children.forEach { it.parent = other }
+    other.records.removeIf { !other.keys.contains(it.key) }
     this.children.add(other)
 }
 //endregion
@@ -123,32 +124,35 @@ fun <K : Comparable<K>, V> TreeNode<K, V>.split(): TreeNode<K, V> {
     val medianIndex = keys.lastIndex / 2
     val medianValue = keys[medianIndex]
 
-    val p = this.parent ?: TreeNode(order)
-    p.children.remove(this)
+    val parent = this.parent ?: TreeNode(order)
+    parent.children.remove(this)
 
     val left = TreeNode(
         order = order,
-        parent = p,
+        parent = parent,
         keys = SortedList(keys.subList(0, medianIndex).toMutableList()),
         children = if (isNotLeaf) SortedList(children.subList(0, medianIndex + 1).toMutableList()) else sortedListOf(),
         records = if (isLeaf) SortedList(records.subList(0, medianIndex + 1).toMutableList()) else sortedListOf()
     )
-    left.children.forEach { it.parent = left }
-    p.children.add(left)
+    parent.adopt(left)
 
     val right = TreeNode(
         order = order,
-        parent = p,
+        parent = parent,
         keys = SortedList(keys.subList(medianIndex, keys.size).toMutableList()),
         children = if (isNotLeaf) SortedList(children.subList(medianIndex + 1, children.size).toMutableList()) else sortedListOf(),
         records = if (isLeaf) SortedList(records.subList(medianIndex, records.size).toMutableList()) else sortedListOf()
     )
-    right.children.forEach { it.parent = right }
-    p.children.add(right)
-    p.keys.add(right.keys.first())
+    parent.adopt(right)
+
+    previous?.next = left
+    left.next = right
+    right.previous = left
+
+    parent.keys.add(right.keys.first())
     if (isNotLeaf) right.keys.remove(medianValue)
 
-    return p
+    return parent
 }
 
 //endregion
