@@ -34,7 +34,7 @@ fun <K : Comparable<K>, V> TreeNode<K, V>.put(key: K, value: V): TreeNode<K, V> 
     outer@ while (true) {
         if (current.isLeaf) {
             current.keys.add(key)
-            current.records.add(Record(key, value))
+            current.records.add(TreeRecord(key, value))
             while (current.isOverflow) current = current.split()
             return current
         }

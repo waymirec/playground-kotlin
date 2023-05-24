@@ -1,6 +1,6 @@
 package net.waymire.playground.kotlin.data.tree.bptree
 
-class BPTree<K : Comparable<K>, V>(order: Int) : Iterable<K> {
+class BTree<K : Comparable<K>, V>(order: Int) : Iterable<TreeRecord<K, V>> {
     private var root = TreeNode<K, V>(order)
 
     fun contains(key: K) = root.containsKey(key)
@@ -13,25 +13,17 @@ class BPTree<K : Comparable<K>, V>(order: Int) : Iterable<K> {
 
     fun remove(key: K) = root.remove(key) != null
 
-    override fun iterator() = keyIterator()
-    fun valueIterator() = valuesSequence().iterator()
-    fun keyIterator() = keysSequence().iterator()
-
-    fun keysSequence(): Sequence<K> = sequence {
+    fun asSequence() = sequence {
         var current: TreeNode<K, V>? = root
         while(current!!.isNotLeaf) current = current.children.first()
         while(current != null) {
-            yieldAll(current.keys)
+            yieldAll(current.records)
             current = current.next
         }
     }
 
-    fun valuesSequence(): Sequence<V> = sequence {
-        var current: TreeNode<K, V>? = root
-        while(current!!.isNotLeaf) current = current.children.first()
-        while(current != null) {
-            yieldAll(current.records.map { it.value })
-            current = current.next
-        }
-    }
+    override fun iterator() = asSequence().iterator()
+
+    fun keys() = asSequence().map { it.key }.toList()
+    fun values() = asSequence().map { it.value }.toList()
 }

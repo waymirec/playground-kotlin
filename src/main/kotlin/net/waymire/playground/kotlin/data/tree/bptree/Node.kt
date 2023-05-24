@@ -4,8 +4,8 @@ import net.waymire.playground.kotlin.SortedList
 import net.waymire.playground.kotlin.sortedListOf
 import kotlin.math.ceil
 
-class Record<K: Comparable<K>, V>(val key: K, val value: V): Comparable<Record<K, V>> {
-    override fun compareTo(other: Record<K, V>) = compareValuesBy(this, other, { it.key}, { it.key })
+data class TreeRecord<K: Comparable<K>, V>(val key: K, val value: V): Comparable<TreeRecord<K, V>> {
+    override fun compareTo(other: TreeRecord<K, V>) = compareValuesBy(this, other, { it.key}, { it.key })
 }
 
 class TreeNode<K: Comparable<K>, V>(
@@ -13,7 +13,7 @@ class TreeNode<K: Comparable<K>, V>(
     var parent: TreeNode<K, V>? = null,
     val keys: SortedList<K> = sortedListOf(),
     val children: SortedList<TreeNode<K, V>> = sortedListOf(),
-    val records: SortedList<Record<K, V>> = sortedListOf()
+    val records: SortedList<TreeRecord<K, V>> = sortedListOf()
 ): Comparable<TreeNode<K, V>> {
     val minElementsAllowed = ceil(order.toDouble() / 2)
     val maxElementsAllowed = order
