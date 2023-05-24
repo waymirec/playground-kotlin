@@ -3,9 +3,6 @@ package net.waymire.playground.kotlin.data.tree.bptree
 import net.waymire.playground.kotlin.SortedList
 import net.waymire.playground.kotlin.sortedListOf
 
-//region Support Types
-//endregion
-
 //region Properties
 val <K : Comparable<K>, V> TreeNode<K, V>.isRoot get() = parent == null
 val <K : Comparable<K>, V> TreeNode<K, V>.isNotRoot get() = !isRoot

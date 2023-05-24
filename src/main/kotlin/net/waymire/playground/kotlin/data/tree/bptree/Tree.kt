@@ -1,7 +1,5 @@
 package net.waymire.playground.kotlin.data.tree.bptree
 
-import java.util.Stack
-
 class BPTree<K : Comparable<K>, V>(order: Int) : Iterable<K> {
     private var root = TreeNode<K, V>(order)
 

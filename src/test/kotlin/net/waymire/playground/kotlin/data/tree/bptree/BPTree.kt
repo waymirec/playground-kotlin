@@ -5,28 +5,22 @@ import kotlin.test.assertEquals
 
 internal class BPTreeTest {
     @Test
-    fun `foo`() {
-        val tree = BPTree<Int, String>(3)
-        for(i in 1..10) {
-           tree.put(i, i.toString())
-        }
-    }
-
-    @Test
     fun `given a B+Tree, when iterating keys, then return the tree in-order`() {
+        val count = 1_000_000
         val tree = BPTree<Int, String>(3)
-        for (i in 1 .. 10) tree.put(i, "Record #$i")
+        for (i in 1 .. count) tree.put(i, "Record #$i")
         val list = tree.keysSequence().toList()
-        val expected = (1..10).toList()
+        val expected = (1..count).toList()
         assertEquals(expected, list)
     }
 
     @Test
     fun `given a B+Tree, when iterating values, then return the tree in-order`() {
+        val count = 1_000_000
         val tree = BPTree<Int, String>(3)
-        for (i in 1 .. 10) tree.put(i, "Record #$i")
+        for (i in 1 .. count) tree.put(i, "Record #$i")
         val list = tree.valuesSequence().toList()
-        val expected = (1..10).map { "Record #$it" }
+        val expected = (1..count).map { "Record #$it" }
         assertEquals(expected, list)
     }
 }
