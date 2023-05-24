@@ -1,5 +1,6 @@
 package net.waymire.playground.kotlin.data.tree.bst
 
+import net.waymire.playground.kotlin.data.tree.avl.TraversalDirection
 import org.hamcrest.CoreMatchers
 import org.hamcrest.MatcherAssert
 import org.junit.jupiter.api.Test
@@ -17,7 +18,7 @@ internal class BinarySearchTreeTest {
     fun `given a BST, when in-order sort requested, then should sort in-order`(values: Set<Int>) {
         val tree = values.toBinarySearchTree()
         val expected = values.sorted()
-        val sorted = tree.traverseInOrder()
+        val sorted = tree.asSequence(TraversalDirection.IN_ORDER).toList()
         assertEquals(expected, sorted)
     }
 
@@ -26,7 +27,7 @@ internal class BinarySearchTreeTest {
         val values = listOf(43, 18, 15, 20, 50, 47, 55)
         val expected = values.toList()
         val tree = values.toBinarySearchTree()
-        val sorted = tree.traversePreOrder()
+        val sorted = tree.asSequence(TraversalDirection.PRE_ORDER).toList()
         assertEquals(expected, sorted)
     }
 
@@ -35,7 +36,7 @@ internal class BinarySearchTreeTest {
         val values = listOf(43, 18, 15, 20, 50, 47, 55)
         val expected = listOf(15, 20, 18, 47, 55, 50, 43)
         val tree = values.toBinarySearchTree()
-        val sorted = tree.traversePostOrder()
+        val sorted = tree.asSequence(TraversalDirection.POST_ORDER).toList()
         assertEquals(expected, sorted)
     }
 
@@ -44,7 +45,7 @@ internal class BinarySearchTreeTest {
         val values = listOf(43, 18, 15, 20, 50, 47, 55)
         val expected = listOf(43,18,50,15,20,47,55)
         val tree = values.toBinarySearchTree()
-        val sorted = tree.traverseBreadthFirst()
+        val sorted = tree.asSequence(TraversalDirection.BREADTH_FIRST).toList()
         assertEquals(expected, sorted)
     }
 
@@ -71,7 +72,7 @@ internal class BinarySearchTreeTest {
         val expected = listOf(43, 18, 15, 20, 50, 47, 55, 53)
         val tree = values.toBinarySearchTree()
         tree.remove(46)
-        val sorted = tree.traversePreOrder()
+        val sorted = tree.asSequence(TraversalDirection.PRE_ORDER).toList()
         assertEquals(expected, sorted)
     }
 
@@ -81,7 +82,7 @@ internal class BinarySearchTreeTest {
         val expected = listOf(43, 18, 15, 20, 50, 46, 55, 53)
         val tree = values.toBinarySearchTree()
         tree.remove(47)
-        val sorted = tree.traversePreOrder()
+        val sorted = tree.asSequence(TraversalDirection.PRE_ORDER).toList()
         assertEquals(expected, sorted)
     }
 
@@ -92,7 +93,7 @@ internal class BinarySearchTreeTest {
         val expected2 = listOf(43, 18, 15, 20, 47, 46, 55, 53)
         val tree = values.toBinarySearchTree()
         tree.remove(50)
-        val sorted = tree.traversePreOrder()
+        val sorted = tree.asSequence(TraversalDirection.PRE_ORDER).toList()
         MatcherAssert.assertThat(sorted, CoreMatchers.anyOf(CoreMatchers.`is`(expected1), CoreMatchers.`is`(expected2)))
     }
 

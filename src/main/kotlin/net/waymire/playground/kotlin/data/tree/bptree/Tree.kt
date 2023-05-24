@@ -1,24 +1,24 @@
-package net.waymire.playground.kotlin.data.tree.btree
+package net.waymire.playground.kotlin.data.tree.bptree
 
 import java.util.Stack
 
-class BTree<T : Comparable<T>>(order: Int) : Iterable<T> {
-    private var root = TreeNode<T>(order)
+class BPTree<K : Comparable<K>, V>(order: Int) : Iterable<K> {
+    private var root = TreeNode<K, V>(order)
 
-    fun contains(value: T) = root.contains(value)
+    fun contains(key: K) = root.containsKey(key)
 
-    fun add(value: T): Boolean {
-        val added = root.add(value)
+    fun put(key: K, value: V): Boolean {
+        val added = root.put(key, value)
         if (added.isRoot) root = added
         return true
     }
 
-    fun remove(value: T) = root.remove(value) != null
+    fun remove(key: K) = root.remove(key) != null
 
     override fun iterator() = asSequence().iterator()
 
-    fun asSequence(): Sequence<T> = sequence {
-        val stack: Stack<Pair<TreeNode<T>, Int>> = Stack()
+    fun asSequence(): Sequence<K> = sequence {
+        val stack: Stack<Pair<TreeNode<K, V>, Int>> = Stack()
         stack.push(Pair(root, 0))
 
         while (stack.isNotEmpty()) {

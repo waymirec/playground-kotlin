@@ -7,24 +7,24 @@ import net.waymire.playground.kotlin.sortedListOf
 //endregion
 
 //region Properties
-val <T : Comparable<T>> BTreeNode<T>.isRoot get() = parent == null
-val <T : Comparable<T>> BTreeNode<T>.isNotRoot get() = !isRoot
-val <T : Comparable<T>> BTreeNode<T>.isLeaf get() = children.isEmpty()
-val <T : Comparable<T>> BTreeNode<T>.isNotLeaf get() = !isLeaf
-val <T : Comparable<T>> BTreeNode<T>.isFull get() = keys.size >= maxKeySize || children.size >= maxChildrenSize
-val <T : Comparable<T>> BTreeNode<T>.isNotFull get() = !isFull
-val <T : Comparable<T>> BTreeNode<T>.isOverSized get() = keys.size > maxKeySize || children.size > maxChildrenSize
-val <T : Comparable<T>> BTreeNode<T>.isUnderSized get() = keys.size < minKeySize || children.size < minChildrenSize
-val <T : Comparable<T>> BTreeNode<T>.hasExtraKeyCapacity get() = keys.size > minKeySize
+val <T : Comparable<T>> TreeNode<T>.isRoot get() = parent == null
+val <T : Comparable<T>> TreeNode<T>.isNotRoot get() = !isRoot
+val <T : Comparable<T>> TreeNode<T>.isLeaf get() = children.isEmpty()
+val <T : Comparable<T>> TreeNode<T>.isNotLeaf get() = !isLeaf
+val <T : Comparable<T>> TreeNode<T>.isFull get() = keys.size >= maxKeySize || children.size >= maxChildrenSize
+val <T : Comparable<T>> TreeNode<T>.isNotFull get() = !isFull
+val <T : Comparable<T>> TreeNode<T>.isOverSized get() = keys.size > maxKeySize || children.size > maxChildrenSize
+val <T : Comparable<T>> TreeNode<T>.isUnderSized get() = keys.size < minKeySize || children.size < minChildrenSize
+val <T : Comparable<T>> TreeNode<T>.hasExtraKeyCapacity get() = keys.size > minKeySize
 //endregion
 
 //region Contains, Add, Remove
-fun <T : Comparable<T>> BTreeNode<T>.contains(value: T): Boolean {
+fun <T : Comparable<T>> TreeNode<T>.contains(value: T): Boolean {
     return findNode(value) != null
 }
 
-fun <T : Comparable<T>> BTreeNode<T>.add(value: T): BTreeNode<T> {
-    var current: BTreeNode<T> = this
+fun <T : Comparable<T>> TreeNode<T>.add(value: T): TreeNode<T> {
+    var current: TreeNode<T> = this
 
     outer@ while (true) {
         if (current.isLeaf) {
@@ -44,7 +44,7 @@ fun <T : Comparable<T>> BTreeNode<T>.add(value: T): BTreeNode<T> {
     }
 }
 
-fun <T : Comparable<T>> BTreeNode<T>.remove(value: T): BTreeNode<T>? {
+fun <T : Comparable<T>> TreeNode<T>.remove(value: T): TreeNode<T>? {
     val node = findNode(value) ?: return null
     if (node.hasExtraKeyCapacity) {
         node.keys.remove(value)
@@ -57,7 +57,7 @@ fun <T : Comparable<T>> BTreeNode<T>.remove(value: T): BTreeNode<T>? {
     return node.promote(value)
 }
 
-fun <T : Comparable<T>> BTreeNode<T>.promote(targetValue: T): BTreeNode<T>? {
+fun <T : Comparable<T>> TreeNode<T>.promote(targetValue: T): TreeNode<T>? {
     val index = keys.indexOf(targetValue)
     if (index < 0) return null
 
@@ -74,7 +74,7 @@ fun <T : Comparable<T>> BTreeNode<T>.promote(targetValue: T): BTreeNode<T>? {
     return null
 }
 
-fun <T : Comparable<T>> BTreeNode<T>.promotePredecessor(targetValue: T): BTreeNode<T>? {
+fun <T : Comparable<T>> TreeNode<T>.promotePredecessor(targetValue: T): TreeNode<T>? {
     val index = keys.indexOf(targetValue)
     val child = children.getOrNull(index) ?: return null
     val promoted = child.keys.removeLast()
@@ -82,7 +82,7 @@ fun <T : Comparable<T>> BTreeNode<T>.promotePredecessor(targetValue: T): BTreeNo
     return child
 }
 
-fun <T : Comparable<T>> BTreeNode<T>.promoteSuccessor(targetValue: T): BTreeNode<T>? {
+fun <T : Comparable<T>> TreeNode<T>.promoteSuccessor(targetValue: T): TreeNode<T>? {
     val index = keys.indexOf(targetValue)
     if (index < 0) return null
     val child = children.getOrNull(index+1) ?: return null
@@ -91,7 +91,7 @@ fun <T : Comparable<T>> BTreeNode<T>.promoteSuccessor(targetValue: T): BTreeNode
     return child
 }
 
-private fun <T : Comparable<T>> BTreeNode<T>.clear() {
+private fun <T : Comparable<T>> TreeNode<T>.clear() {
     this.keys.clear()
     this.children.clear()
     this.parent = null
@@ -99,8 +99,8 @@ private fun <T : Comparable<T>> BTreeNode<T>.clear() {
 //endregion
 
 //region Search
-fun <T : Comparable<T>> BTreeNode<T>.findNode(value: T): BTreeNode<T>? {
-    var current: BTreeNode<T> = this
+fun <T : Comparable<T>> TreeNode<T>.findNode(value: T): TreeNode<T>? {
+    var current: TreeNode<T> = this
     outer@ while (true) {
         if (current.keys.contains(value)) return current
         if (current.isLeaf) return null
@@ -117,15 +117,15 @@ fun <T : Comparable<T>> BTreeNode<T>.findNode(value: T): BTreeNode<T>? {
 //endregion
 
 //region Rotations
-fun <T : Comparable<T>> BTreeNode<T>.split(): BTreeNode<T> {
+fun <T : Comparable<T>> TreeNode<T>.split(): TreeNode<T> {
     val medianIndex = keys.lastIndex / 2
     val medianValue = keys[medianIndex]
 
-    val p = this.parent ?: BTreeNode(order)
+    val p = this.parent ?: TreeNode(order)
     p.keys.add(medianValue)
     p.children.remove(this)
 
-    val left = BTreeNode(
+    val left = TreeNode(
         order = order,
         parent = p,
         keys = SortedList(keys.subList(0, medianIndex).toMutableList()),
@@ -133,7 +133,7 @@ fun <T : Comparable<T>> BTreeNode<T>.split(): BTreeNode<T> {
     )
     p.children.add(left)
 
-    val right = BTreeNode(
+    val right = TreeNode(
         order = order,
         parent = p,
         keys = SortedList(keys.subList(medianIndex + 1, keys.size).toMutableList()),

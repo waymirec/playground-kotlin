@@ -1,6 +1,5 @@
 package net.waymire.playground.kotlin.data.tree.bst
 
-import java.util.Stack
 import kotlin.random.Random
 
 //region Support Types
@@ -133,74 +132,5 @@ private fun <T: Comparable<T>> BinarySearchTreeNode<T>.findReplacementNodeForDel
         findInOrderSuccessor()
     else
         findInOrderPredecessor()
-}
-//endregion
-
-//region Node Traversal
-fun <T: Comparable<T>> BinarySearchTreeNode<T>.traverseInOrder(): List<T> {
-    val stack: Stack<BinarySearchTreeNode<T>> = Stack()
-    val accumulator: MutableList<T> = mutableListOf()
-    var current: BinarySearchTreeNode<T>? = this
-    while(true) {
-        while(current != null) {
-            stack.push(current)
-            current = current.left
-        }
-        if (stack.empty()) break
-
-        current = stack.pop()
-        accumulator.add(current.value)
-        current = current.right
-        continue
-    }
-    return accumulator
-}
-
-fun <T: Comparable<T>> BinarySearchTreeNode<T>.traversePreOrder(): List<T> {
-    val queue: ArrayDeque<BinarySearchTreeNode<T>> = ArrayDeque()
-    val accumulator: MutableList<T> = mutableListOf()
-    var current: BinarySearchTreeNode<T>? = this
-    while(true) {
-        while(current != null) {
-            accumulator.add(current.value)
-            queue.addFirst(current)
-            current = current.left
-        }
-        if (queue.isEmpty()) break
-
-        current = queue.removeFirst().right
-        continue
-    }
-    return accumulator
-}
-
-fun <T: Comparable<T>> BinarySearchTreeNode<T>.traversePostOrder(): List<T> {
-    val stack1: Stack<BinarySearchTreeNode<T>> = Stack()
-    val stack2: Stack<BinarySearchTreeNode<T>> = Stack()
-    stack1.push(this)
-
-    while(stack1.isNotEmpty()) {
-        val current = stack1.pop()
-        stack2.push(current)
-        current.left?.let { stack1.push(it) }
-        current.right?.let { stack1.push(it) }
-    }
-
-    return stack2.toList().map { it.value }.reversed()
-}
-
-fun <T: Comparable<T>> BinarySearchTreeNode<T>.traverseBreadthFirst(): List<T> {
-    val accumulator: MutableList<T> = mutableListOf()
-    val deque = ArrayDeque<BinarySearchTreeNode<T>>()
-    deque.addFirst(this)
-
-    while(deque.isNotEmpty()) {
-        val node = deque.removeFirst()
-        accumulator.add(node.value)
-        node.left?.let { deque.addLast(it) }
-        node.right?.let { deque.addLast(it) }
-    }
-
-    return accumulator
 }
 //endregion
