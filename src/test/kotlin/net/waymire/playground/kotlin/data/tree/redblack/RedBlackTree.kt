@@ -6,11 +6,10 @@ import kotlin.test.assertTrue
 
 internal class RedBlackTreeTest {
     @Test
-    fun `given a balanced Red-Black Tree, when balance is checked, then return true`() {
-        val values =    listOf(5, 8, 1, 10, 9, 15, 20)
+    fun `given a balanced tree with red leaves, when a new node is added, then recolor`() {
+        val values = listOf(3, 1, 5, 6, 7, 8, 9)
         val tree = values.toRedBlackTree()
-        assertTrue(tree.isBalanced)
-        assertFalse(tree.isLeftHeavy)
-        assertFalse(tree.isRightHeavy)
+        tree.add(10)
+        println("foo")
     }
 }

@@ -1,7 +1,5 @@
 package net.waymire.playground.kotlin.data.tree.redblack
 
-import net.waymire.playground.kotlin.plus
-import kotlin.math.abs
 import kotlin.math.max
 
 //region Support Types
@@ -26,14 +24,6 @@ val <T: Comparable<T>> RedBlackTreeNode<T>?.isRed get() = this?.let { !black } ?
 val <T: Comparable<T>> RedBlackTreeNode<T>?.isBlack get() = this?.let { black } ?: true
 val <T: Comparable<T>> RedBlackTreeNode<T>.isLeafNode get() = left == null && right == null
 val <T: Comparable<T>> RedBlackTreeNode<T>.isNotLeafNode get() = !isLeafNode
-val <T: Comparable<T>> RedBlackTreeNode<T>.balanceFactor get() = leftHeight - rightHeight
-val <T: Comparable<T>> RedBlackTreeNode<T>.isBalanced get() = abs(balanceFactor) < 2
-val <T: Comparable<T>> RedBlackTreeNode<T>.isNotBalanced get() = !isBalanced
-val <T: Comparable<T>> RedBlackTreeNode<T>.isLeftHeavy get() = balanceFactor > 0
-val <T: Comparable<T>> RedBlackTreeNode<T>.isLeftRightHeavy get() = isLeftHeavy && left!!.isRightHeavy
-val <T: Comparable<T>> RedBlackTreeNode<T>.isRightHeavy get() = balanceFactor < 0
-val <T: Comparable<T>> RedBlackTreeNode<T>.isRightLeftHeavy get() = isRightHeavy && right!!.isLeftHeavy
-val <T: Comparable<T>> RedBlackTreeNode<T>.height get() = max(leftHeight, rightHeight)
 //endregion
 
 //region Contains, Add, Remove
@@ -64,7 +54,7 @@ fun <T: Comparable<T>> RedBlackTreeNode<T>.add(value: T): RedBlackTreeNode<T> {
                 current = targetNode
                 continue
             }
-            added = RedBlackTreeNode(value = value, parent = current)
+            added = RedBlackTreeNode(value = value, parent = current, black = false)
             current.left = added
             break
         } else {
@@ -101,6 +91,7 @@ fun <T: Comparable<T>> RedBlackTreeNode<T>.rightRotate(): RedBlackTreeNode<T> {
     return leftChild
 }
 
+
 fun <T: Comparable<T>> RedBlackTreeNode<T>.leftRotate(): RedBlackTreeNode<T> {
     val rightChild = this.right ?: throw IllegalStateException()
     this.right = rightChild.left
@@ -113,15 +104,15 @@ fun <T: Comparable<T>> RedBlackTreeNode<T>.leftRotate(): RedBlackTreeNode<T> {
 }
 
 fun <T: Comparable<T>> RedBlackTreeNode<T>.leftRightRotate(): RedBlackTreeNode<T> {
-    val rightChild = this.right ?: throw IllegalStateException()
-    rightChild.rightRotate()
-    return this.leftRotate()
+    val leftChild = left ?: throw IllegalStateException()
+    leftChild.leftRotate()
+    return this.rightRotate()
 }
 
 fun <T: Comparable<T>> RedBlackTreeNode<T>.rightLeftRotate(): RedBlackTreeNode<T> {
-    val leftChild = this.left ?: throw IllegalStateException()
-    leftChild.leftRotate()
-    return this.rightRotate()
+    val rightChild = right ?: throw IllegalStateException()
+    rightChild.rightRotate()
+    return this.leftRotate()
 }
 //endregion
 
@@ -129,39 +120,18 @@ fun <T: Comparable<T>> RedBlackTreeNode<T>.rightLeftRotate(): RedBlackTreeNode<T
 //endregion
 
 //region Tree Height
-fun <T: Comparable<T>> RedBlackTreeNode<T>.updateParentHeight() {
-    val parent = this.parent ?: return
-    if (isLeftChild)
-        parent.leftHeight = max(parent.leftHeight, height + isBlack)
-    else
-        parent.rightHeight = max(parent.rightHeight, height + isBlack)
-}
 
-fun <T: Comparable<T>> RedBlackTreeNode<T>.updateTreeHeightTopDown() {
-    val queue: ArrayDeque<RedBlackTreeNode<T>> = ArrayDeque()
-    clearHeight()
-    queue.addFirst(this)
+fun <T : Comparable<T>> RedBlackTreeNode<T>.height(): Int {
+    val queue: ArrayDeque<Pair<RedBlackTreeNode<T>, Int>> = ArrayDeque()
+    queue.addFirst(Pair(this, 0))
+
+    var maxHeight = 0
     while(queue.isNotEmpty()) {
-        val n = queue.removeFirst()
-        if (n.isLeafNode) n.updateTreeHeightBottomUp()
-        n.left?.let { it.clearHeight(); queue.addFirst(it) }
-        n.right?.let { it.clearHeight(); queue.addFirst(it) }
+        val (node, height) = queue.removeFirst()
+        maxHeight = max(height, maxHeight)
+        node.left?.let { queue.addFirst(Pair(it, height+1)) }
+        node.right?.let { queue.addFirst(Pair(it, height+1)) }
     }
+    return maxHeight
 }
-
-fun <T: Comparable<T>> RedBlackTreeNode<T>.updateTreeHeightBottomUp() {
-    if (isRoot) return
-    var node: RedBlackTreeNode<T>? = this
-    node?.clearHeight()
-    while(node != null) {
-        node.updateParentHeight()
-        node = node.parent
-    }
-}
-
-private fun <T: Comparable<T>> RedBlackTreeNode<T>.clearHeight() {
-    this.leftHeight = 1
-    this.rightHeight = 1
-}
-
 //endregion

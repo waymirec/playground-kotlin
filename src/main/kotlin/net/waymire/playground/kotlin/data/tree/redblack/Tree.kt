@@ -1,117 +1,63 @@
 package net.waymire.playground.kotlin.data.tree.redblack
 
-import net.waymire.playground.kotlin.data.tree.avl.leftRightRotate
-
 class RedBlackTree<T: Comparable<T>>(rootValue: T) {
     private var root = RedBlackTreeNode(value = rootValue, black = true)
 
-    val isBalanced get() = root.isBalanced
-    val isLeftHeavy get() = root.isLeftHeavy
-    val isRightHeavy get() = root.isRightHeavy
-    val height get() = root.height
+    val height get() = root.height()
 
     fun contains(value: T) = root.contains(value)
 
     fun add(value: T): Boolean {
-        val result = root.add(value)
-        result.updateTreeHeightBottomUp()
-        result.checkTree()
-        //if (root.isNotBalanced) result.rebalance()
+        val newNode = root.add(value)
+        if (newNode.parent.isBlack) return true
+
+        newNode.checkTree()
         return true
     }
 
     fun remove(value: T) = root.remove(value)
 
-    private fun RedBlackTreeNode<T>.rebalance() {
-        var node = this
-        if (node.isBalanced) {
-            while(true) {
-                val parent = node.parent
-                if (node.isNotBalanced) break
-                if (parent == null) break
-                node = parent
-            }
-        }
+    private fun RedBlackTreeNode<T>.checkTree() {
+        var current: RedBlackTreeNode<T>? = this
 
-        if (node.isNotBalanced) {
-            val updated = when {
-                node.isRightLeftHeavy -> node.leftRightRotate()
-                node.isRightHeavy -> node.leftRotate()
-                node.isLeftRightHeavy -> node.rightLeftRotate()
-                else -> node.rightRotate()
+        while(current != null) {
+            if (current.isRed && current.parent.isRed) {
+                current.correctTree()
             }
-            if (root.value == node.value) root = updated
-            root.updateTreeHeightTopDown()
+            current = current.parent
         }
     }
 
-    private fun <T: Comparable<T>> RedBlackTreeNode<T>.checkTree() {
+    private fun RedBlackTreeNode<T>.correctTree() {
         val parent = this.parent ?: return
-        var node: RedBlackTreeNode<T>? = this
+        val grandParent = parent.parent ?: return
 
-        while(node != null) {
-            if (node.isRed && parent.isRed) {
-                correctTree()
-            }
-            node = node.parent
+        if (aunt.isRed) {
+            colorFlip()
+            return
         }
-    }
 
-    private fun <T: Comparable<T>> RedBlackTreeNode<T>.correctTree() {
-        if (aunt.isBlack) {
-            val p = parent
-            val gp = grandParent
-            var tmp: Boolean
-            if (p!!.isRightChild && isRightChild) {
-                gp!!.leftRotate()
-                tmp = p.black
-                p.black = gp.black
-                gp.black = tmp
-                //p.colorFlip()
-                return
-            }
-            if (p.isRightChild && isLeftChild) {
-                gp!!.leftRightRotate()
-                tmp = this.black
-                this.black = gp.black
-                gp.black = tmp
-                //p.colorFlip()
-                return
-            }
-            if (p.isLeftChild && isLeftChild) {
-                gp!!.rightRotate()
-                tmp = p.black
-                p.black = gp.black
-                gp.black = tmp
-                //p.colorFlip()
-                return
-            }
-            if (p.isLeftChild && isRightChild) {
-                gp!!.rightLeftRotate()
-                tmp = this.black
-                this.black = gp.black
-                gp.black = tmp
-                //p.colorFlip()
-                return
-            }
-        } else {
-            this.colorFlip2()
-            grandParent?.colorFlip()
+        val updated = when (Pair(this.isLeftChild, parent.isLeftChild)) {
+            Pair(true, false) ->  grandParent.rightLeftRotate()
+            Pair(false, true) -> grandParent.leftRightRotate()
+            Pair(false, false) -> grandParent.leftRotate()
+            Pair(true, true) -> grandParent.rightRotate()
+            else -> this
         }
+        if (updated.parent == null) root = updated
+        parent.colorFix()
     }
 
-    private fun <T: Comparable<T>> RedBlackTreeNode<T>.colorFlip() {
-        this.black = !black
-        this.left?.black = !black
-        this.right?.black = !black
-        root.black = true
-        root.updateTreeHeightTopDown()
-    }
-
-    private fun <T: Comparable<T>> RedBlackTreeNode<T>.colorFlip2() {
+    private fun RedBlackTreeNode<T>.colorFlip() {
         this.grandParent?.red = true
         aunt?.black = true
         this.parent?.black = true
         root.black = true
+    }
+
+    private fun RedBlackTreeNode<T>.colorFix() {
+        this.black = true
+        this.left?.red = true
+        this.right?.red = true
     }
 }
