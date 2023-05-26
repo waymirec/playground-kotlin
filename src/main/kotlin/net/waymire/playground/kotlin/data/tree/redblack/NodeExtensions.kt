@@ -1,5 +1,6 @@
 package net.waymire.playground.kotlin.data.tree.redblack
 
+import java.util.Stack
 import kotlin.math.max
 
 //region Support Types
@@ -120,18 +121,27 @@ fun <T: Comparable<T>> RedBlackTreeNode<T>.rightLeftRotate(): RedBlackTreeNode<T
 //endregion
 
 //region Tree Height
-
-fun <T : Comparable<T>> RedBlackTreeNode<T>.height(): Int {
-    val queue: ArrayDeque<Pair<RedBlackTreeNode<T>, Int>> = ArrayDeque()
-    queue.addFirst(Pair(this, 0))
-
-    var maxHeight = 0
-    while(queue.isNotEmpty()) {
-        val (node, height) = queue.removeFirst()
-        maxHeight = max(height, maxHeight)
-        node.left?.let { queue.addFirst(Pair(it, height+1)) }
-        node.right?.let { queue.addFirst(Pair(it, height+1)) }
+fun <T : Comparable<T>> RedBlackTreeNode<T>.updateHeight() {
+    val stack1: Stack<RedBlackTreeNode<T>> = Stack()
+    val queue = ArrayDeque<RedBlackTreeNode<T>>()
+    stack1.push(this)
+    while(stack1.isNotEmpty()) {
+        val current = stack1.pop()
+        queue.addFirst(current)
+        current.left?.let { stack1.push(it) }
+        current.right?.let { stack1.push(it) }
     }
-    return maxHeight
+
+    val iterator = queue.iterator()
+    while(iterator.hasNext()) {
+        val node = iterator.next()
+        val nodeBlackHeight = if (node.isBlack) 1 else 0
+
+        node.leftBlackHeight = node.left?.let { it.blackHeight + nodeBlackHeight } ?: nodeBlackHeight
+        node.rightBlackHeight = node.right?.let { it.blackHeight + nodeBlackHeight } ?: nodeBlackHeight
+
+        node.leftHeight = node.left?.let { it.height + 1 } ?: 0
+        node.rightHeight = node.right?.let { it.height + 1 } ?: 0
+    }
 }
 //endregion

@@ -3,7 +3,7 @@ package net.waymire.playground.kotlin.data.tree.redblack
 class RedBlackTree<T: Comparable<T>>(rootValue: T) {
     private var root = RedBlackTreeNode(value = rootValue, black = true)
 
-    val height get() = root.height()
+    val height get() = root.height
 
     fun contains(value: T) = root.contains(value)
 
@@ -12,6 +12,7 @@ class RedBlackTree<T: Comparable<T>>(rootValue: T) {
         if (newNode.parent.isBlack) return true
 
         newNode.checkTree()
+        root.updateHeight()
         return true
     }
 
